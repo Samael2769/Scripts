@@ -1,0 +1,29 @@
+#!bin/bash
+
+echo "===Config==="
+git config --global --add safe.directory $PWD
+echo "===git Add==="
+STATUS=($(git status -s))
+COMMIT=""
+for (( c=0; c<${#STATUS[@]}; c++ ))
+do
+    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = "AM" ]]
+    then
+        echo ${STATUS[$c + 1]}
+        git add ${STATUS[$c + 1]}
+        if [[ ${STATUS[$c]} = "??" ]]
+        then
+            TMP="[ADD]"
+        else
+            TMP="[MOD]"
+        fi
+        COMMIT+=$TMP" "${STATUS[$c + 1]}
+        #if [[ $(( $c + 1 )) -lt $(( ${#STATUS[@]} - 1)) ]]
+        #then
+            #COMMIT+=", "
+        #fi
+    fi
+done;
+echo $COMMIT
+git commit -m $COMMIT
+#git push

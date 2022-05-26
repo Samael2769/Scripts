@@ -6,13 +6,10 @@ echo "===git Add==="
 STATUS=($(git status -s))
 COMMIT=""
 SYM=("AM", "M", "MM")
-for (( c=0; c<${#STATUS[@]}; c++ ))
+for (( c=0; c<${#STATUS[@]}; c+=2 ))
 do
-    for elem in ${SYM[@]}
-    do
-    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = $elem ]]
+    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} == *"M"* ]]
     then
-        echo ${STATUS[$c + 1]}
         git add ${STATUS[$c + 1]}
         if [[ ${STATUS[$c]} = "??" ]]
         then
@@ -22,8 +19,8 @@ do
         fi
         COMMIT+=$TMP" "${STATUS[$c + 1]}", "
     fi
-    done
-done;
-echo $COMMIT
+done
+echo "===Commiting==="
 git commit -m "$COMMIT"
+echo "===Pushing==="
 git push

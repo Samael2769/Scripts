@@ -5,9 +5,12 @@ git config --global --add safe.directory $PWD
 echo "===git Add==="
 STATUS=($(git status -s))
 COMMIT=""
+SYM=("AM", "M", "MM")
 for (( c=0; c<${#STATUS[@]}; c++ ))
 do
-    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = "AM" ]]
+    for elem in ${SYM[@]}
+    do
+    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = $elem ]]
     then
         echo ${STATUS[$c + 1]}
         git add ${STATUS[$c + 1]}
@@ -17,13 +20,10 @@ do
         else
             TMP="[MOD]"
         fi
-        COMMIT+=$TMP" "${STATUS[$c + 1]}
-        #if [[ $(( $c + 1 )) -lt $(( ${#STATUS[@]} - 1)) ]]
-        #then
-            #COMMIT+=", "
-        #fi
+        COMMIT+=$TMP" "${STATUS[$c + 1]}", "
     fi
+    done
 done;
 echo $COMMIT
-git commit -m $COMMIT
-#git push
+git commit -m "$COMMIT"
+git push

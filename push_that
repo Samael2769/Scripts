@@ -5,7 +5,6 @@ git config --global --add safe.directory $PWD
 echo "===git Add==="
 STATUS=($(git status -s))
 COMMIT=""
-SYM=("AM", "M", "MM")
 for (( c=0; c<${#STATUS[@]}; c+=2 ))
 do
     if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} == *"M"* ]]

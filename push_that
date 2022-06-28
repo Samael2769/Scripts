@@ -7,10 +7,10 @@ STATUS=($(git status -s))
 COMMIT=""
 for (( c=0; c<${#STATUS[@]}; c+=2 ))
 do
-    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} == *"M"* ]]
+    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} == *"M"* ||  ${STATUS[$c]} = *"ai"* ]]
     then
         git add ${STATUS[$c + 1]}
-        if [[ ${STATUS[$c]} = "??" ]]
+        if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = *"ai"* ]]
         then
             TMP="[ADD]"
         else

@@ -1,4 +1,4 @@
-#!bin/bash
+#!/usr/bin/bash
 
 echo "===Config==="
 git config --global --add safe.directory $PWD

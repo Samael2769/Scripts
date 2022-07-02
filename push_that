@@ -7,15 +7,25 @@ STATUS=($(git status -s))
 COMMIT=""
 for (( c=0; c<${#STATUS[@]}; c+=2 ))
 do
-    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} == *"M"* ||  ${STATUS[$c]} = *"ai"* ]]
+    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} == *"M"* ||  ${STATUS[$c]} = *"C"* ||  ${STATUS[$c]} = *"T"* || ${STATUS[$c]} = *"A"* || ${STATUS[$c]} = *"D"* || ${STATUS[$c]} = *"R"* || ${STATUS[$c]} = *"U"* ]]
     then
         git add ${STATUS[$c + 1]}
-        if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = *"ai"* ]]
+        if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = *"A"* ]]
         then
             TMP="[ADD]"
-        else
+        elif [[ ${STATUS[$c]} = *"M"* ]]
+        then
             TMP="[MOD]"
-        fi
+        elif [[ ${STATUS[$c]} = *"C"* ]]
+        then
+            TMP="[COPY]"
+        elif [[ ${STATUS[$c]} = *"T"* ]]
+        then
+            TMP="[CHANGED]"
+        elif [[ ${STATUS[$c]} = *"D"* ]]
+            TMP="[DELETE]"
+        else
+            TMP="[UPDATED]"
         COMMIT+=$TMP" "${STATUS[$c + 1]}", "
     fi
 done

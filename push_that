@@ -33,6 +33,6 @@ do
     fi
 done
 echo "===Commiting==="
-git commit -m "$COMMIT" -m $'$1'
+git commit -m "$COMMIT" -m "$1"
 echo "===Pushing==="
 git push

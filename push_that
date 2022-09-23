@@ -34,6 +34,6 @@ do
 done
 echo "===Commiting==="
 DESC=$(echo -ne $1)
-git commit -m "$COMMIT" -m "$Desc"
+git commit -m "$COMMIT" -m "$DESC"
 echo "===Pushing==="
 git push

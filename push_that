@@ -34,6 +34,10 @@ do
 done
 echo "===Commiting==="
 DESC=$(echo -ne $1)
-git commit -m "$COMMIT" -m "$DESC"
+if [[ $DESC = "" ]]
+then
+    DESC="Updated"
+fi
+git commit -m "$DESC" -m "$COMMIT"
 echo "===Pushing==="
 git push

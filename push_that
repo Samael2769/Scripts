@@ -7,13 +7,6 @@ echo "=== git Add ==="
 STATUS=($(git status -s))
 COMMIT=""
 c=0  # Initialisation de c
-
-for i in "${STATUS[@]}"; do
-    echo "$i"
-done
-
-echo "=== Processing ==="
-
 # Boucle à travers les statuts des fichiers
 while [[ $c -lt ${#STATUS[@]} ]]; do
     STAT="${STATUS[$c]}"
@@ -30,14 +23,14 @@ while [[ $c -lt ${#STATUS[@]} ]]; do
         NEW_NAME="${STATUS[$c + 3]}"
 
         # Ajout uniquement du nouveau fichier
-        #git add "$NEW_NAME"  # Ajouter le fichier renommé
+        git add "$NEW_NAME"  # Ajouter le fichier renommé
         TMP="[RENAMED] $OLD_NAME -> $NEW_NAME"
         COMMIT+="$TMP, "
 
         # Passer à l'élément suivant
         ((c+=4))
     else
-        #git add "$FILE"  # Ajouter le fichier
+        git add "$FILE"  # Ajouter le fichier
         case "$STAT" in
             "??")
                 TMP="[ADD]"
@@ -82,12 +75,10 @@ DESC=$(echo -ne "$1")
 if [[ -z $DESC ]]; then
     DESC="Updated"
 fi
-echo "Commit message: $DESC"
-echo "Commit details: $COMMIT"
 
 # Ne pas engager ici pour la démonstration, décommentez la ligne suivante pour l'activer
-# #git commit -m "$DESC" -m "$COMMIT"
+git commit -m "$DESC" -m "$COMMIT"
 
 echo "=== Pushing ==="
 # Ne pas pousser ici pour la démonstration, décommentez la ligne suivante pour l'activer
-# git push
+git push

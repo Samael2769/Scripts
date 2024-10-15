@@ -5,6 +5,8 @@ git config --global --add safe.directory $PWD
 echo "===git Add==="
 STATUS=($(git status -s))
 COMMIT=""
+echo $STATUS
+exit
 for (( c=0; c<${#STATUS[@]}; c+=2 ))
 do
     
@@ -29,8 +31,10 @@ do
         else
             TMP="[UPDATED]"
         fi
-        COMMIT+=$TMP" "${STATUS[$c + 1]}", "
+    else
+        TMP="[??]"
     fi
+    COMMIT+=$TMP" "${STATUS[$c + 1]}", "
 done
 echo "===Commiting==="
 DESC=$(echo -ne $1)

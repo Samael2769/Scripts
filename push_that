@@ -1,47 +1,93 @@
 #!/usr/bin/bash
 
-echo "===Config==="
-git config --global --add safe.directory $PWD
-echo "===git Add==="
+echo "=== Config ==="
+git config --global --add safe.directory "$PWD"
+
+echo "=== git Add ==="
 STATUS=($(git status -s))
 COMMIT=""
-echo $STATUS
-exit
-for (( c=0; c<${#STATUS[@]}; c+=2 ))
-do
-    
-    if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = *"M"* ||  ${STATUS[$c]} = *"C"* ||  ${STATUS[$c]} = *"T"* || ${STATUS[$c]} = *"A"* || ${STATUS[$c]} = *"D"* || ${STATUS[$c]} = *"R"* || ${STATUS[$c]} = *"U"* ]]
-    then
-        git add ${STATUS[$c + 1]}
-        if [[ ${STATUS[$c]} = "??" || ${STATUS[$c]} = *"A"* ]]
-        then
-            TMP="[ADD]"
-        elif [[ ${STATUS[$c]} == *"M"* ]]
-        then
-            TMP="[MOD]"
-        elif [[ ${STATUS[$c]} = *"C"* ]]
-        then
-            TMP="[COPY]"
-        elif [[ ${STATUS[$c]} = *"T"* ]]
-        then
-            TMP="[CHANGED]"
-        elif [[ ${STATUS[$c]} = *"D"* ]]
-        then
-            TMP="[DELETE]"
-        else
-            TMP="[UPDATED]"
-        fi
-    else
-        TMP="[??]"
-    fi
-    COMMIT+=$TMP" "${STATUS[$c + 1]}", "
+c=0  # Initialisation de c
+
+for i in "${STATUS[@]}"; do
+    echo "$i"
 done
-echo "===Commiting==="
-DESC=$(echo -ne $1)
-if [[ $DESC = "" ]]
-then
+
+echo "=== Processing ==="
+
+# Boucle à travers les statuts des fichiers
+while [[ $c -lt ${#STATUS[@]} ]]; do
+    STAT="${STATUS[$c]}"
+    FILE="${STATUS[$c + 1]}"
+
+    echo "Status: $STAT"
+    echo "File: $FILE"
+
+    # Vérification pour un renommage
+    if [[ $STAT == "R"* ]]; then
+        # Le fichier a été renommé
+        # Le nom du fichier avant et après le renommage est séparé par "->"
+        OLD_NAME="${FILE}"
+        NEW_NAME="${STATUS[$c + 3]}"
+
+        # Ajout uniquement du nouveau fichier
+        #git add "$NEW_NAME"  # Ajouter le fichier renommé
+        TMP="[RENAMED] $OLD_NAME -> $NEW_NAME"
+        COMMIT+="$TMP, "
+
+        # Passer à l'élément suivant
+        ((c+=4))
+    else
+        #git add "$FILE"  # Ajouter le fichier
+        case "$STAT" in
+            "??")
+                TMP="[ADD]"
+                ;;
+            "A"*)
+                TMP="[ADD]"
+                ;;
+            "M"*)
+                TMP="[MOD]"
+                ;;
+            "C"*)
+                TMP="[COPY]"
+                ;;
+            "T"*)
+                TMP="[CHANGED]"
+                ;;
+            "D"*)
+                TMP="[DELETE]"
+                ;;
+            "U"*)
+                TMP="[CONFLICT]"
+                ;;
+            *)
+                TMP="[UNKNOWN]"
+                ;;
+        esac
+        
+        # Ajout au message de commit seulement si le statut est connu
+        COMMIT+="$TMP $FILE, "
+        
+        # Passer à l'élément suivant
+        ((c+=2))
+    fi
+done
+
+# Suppression de la dernière virgule et espace
+COMMIT=${COMMIT%, }
+
+# Engagement des changements
+echo "=== Committing ==="
+DESC=$(echo -ne "$1")
+if [[ -z $DESC ]]; then
     DESC="Updated"
 fi
-git commit -m "$DESC" -m "$COMMIT"
-echo "===Pushing==="
-git push
+echo "Commit message: $DESC"
+echo "Commit details: $COMMIT"
+
+# Ne pas engager ici pour la démonstration, décommentez la ligne suivante pour l'activer
+# #git commit -m "$DESC" -m "$COMMIT"
+
+echo "=== Pushing ==="
+# Ne pas pousser ici pour la démonstration, décommentez la ligne suivante pour l'activer
+# git push

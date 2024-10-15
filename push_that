@@ -76,6 +76,9 @@ if [[ -z $DESC ]]; then
     DESC="Updated"
 fi
 
+echo "Commit message: $DESC"
+echo "Commit: $COMMIT"
+
 # Ne pas engager ici pour la démonstration, décommentez la ligne suivante pour l'activer
 git commit -m "$DESC" -m "$COMMIT"
 
